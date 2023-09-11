@@ -1,0 +1,5 @@
+﻿  Shader.cpp
+C:\Users\Vitor\Documents\GitHub\PG2023-2\PG2023-2\Common\src\Shader.cpp(3,10): fatal  error C1083: Não é possível abrir arquivo incluir: 'Shader.h': No such file or directory
+  Source.cpp
+C:\Users\Vitor\Documents\GitHub\PG2023-2\PG2023-2\HelloTriangle\HelloTriangle\Source.cpp(17,10): fatal  error C1083: Não é possível abrir arquivo incluir: 'Shader.h': No such file or directory
+  Gerando Código...
