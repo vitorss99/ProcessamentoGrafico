@@ -86,9 +86,6 @@ int main()
 	//Exercício 2
 	//projection = glm::ortho(0.0, 800.0, 600.0, 00.0, -1.0, 1.0);
 
-	//Exercício 3
-	//projection = glm::ortho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
-
 	shader.Use();
 
 	shader.setMat4("projection", glm::value_ptr(projection));
@@ -109,6 +106,7 @@ int main()
 		// Recuperando o tamanho da janela da aplicação
 		glfwGetFramebufferSize(window, &width, &height);
 
+		//desenho 1 ------------------------------------------------------------------------------------------//
 		// Dimensiona a viewport
 		glViewport(width / 2, height / 2, width / 2, height / 2);
 		glBindVertexArray(VAO); //Conectando ao buffer de geometria
@@ -116,60 +114,90 @@ int main()
 		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0); //enviando cor para variável uniform inputColor
 
 		// Chamada de desenho - drawcall
-		// Poligono Preenchido - GL_TRIANGLES
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		
 		// Chamada de desenho - drawcall
-		// Contorno - Loop de linhas - GL_LINE_LOOP
 		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
 		glDrawArrays(GL_LINE_LOOP, 0, 3);
 		shader.setVec4("inputColor", 0.0, 1.0, 1.0, 1.0);
 		glDrawArrays(GL_LINE_LOOP, 3, 3);
 
 		// Chamada de desenho - drawcall
-		// PONTOS - GL_POINTS
 		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
 		glDrawArrays(GL_POINTS, 0, 6);
 
+		//desenho 2 -------------------------------------------------------------------------------------------//
+		// Dimensiona a segunda viewport
+		glViewport(0, height/2, width / 2, height / 2);
+		glBindVertexArray(VAO);
+
+		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0); //enviando cor para variável uniform inputColor
+
+		// Chamada de desenho - drawcall
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		// Chamada de desenho - drawcall
+		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
+		glDrawArrays(GL_LINE_LOOP, 0, 3);
+		shader.setVec4("inputColor", 0.0, 1.0, 1.0, 1.0);
+		glDrawArrays(GL_LINE_LOOP, 3, 3);
+
+		// Chamada de desenho - drawcall
+		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
+		glDrawArrays(GL_POINTS, 0, 6);
+
+		// Chamada de desenho - drawcall
+		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
+		glDrawArrays(GL_POINTS, 0, 6);
+
+		//desenho 3 -------------------------------------------------------------------------------------------//
 		// Dimensiona a segunda viewport
 		glViewport(0, 0, width / 2, height / 2);
+		glBindVertexArray(VAO);
+
 		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0); //enviando cor para variável uniform inputColor
 
 		// Chamada de desenho - drawcall
-		// Poligono Preenchido - GL_TRIANGLES
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		// Chamada de desenho - drawcall
-		// Contorno - Loop de linhas - GL_LINE_LOOP
 		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
 		glDrawArrays(GL_LINE_LOOP, 0, 3);
 		shader.setVec4("inputColor", 0.0, 1.0, 1.0, 1.0);
 		glDrawArrays(GL_LINE_LOOP, 3, 3);
 
 		// Chamada de desenho - drawcall
-		// PONTOS - GL_POINTS
 		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
 		glDrawArrays(GL_POINTS, 0, 6);
 
-		// Dimensiona a terceira viewport
-		glViewport(width, height, width, height);
+		// Chamada de desenho - drawcall
+		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
+		glDrawArrays(GL_POINTS, 0, 6);
+
+		//desenho 4 -------------------------------------------------------------------------------------------//
+		// Dimensiona a segunda viewport
+		glViewport(width/2, 0, width / 2, height / 2);
+		glBindVertexArray(VAO);
+
 		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0); //enviando cor para variável uniform inputColor
 
 		// Chamada de desenho - drawcall
-		// Poligono Preenchido - GL_TRIANGLES
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		// Chamada de desenho - drawcall
-		// Contorno - Loop de linhas - GL_LINE_LOOP
 		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
 		glDrawArrays(GL_LINE_LOOP, 0, 3);
 		shader.setVec4("inputColor", 0.0, 1.0, 1.0, 1.0);
 		glDrawArrays(GL_LINE_LOOP, 3, 3);
 
 		// Chamada de desenho - drawcall
-		// PONTOS - GL_POINTS
 		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
 		glDrawArrays(GL_POINTS, 0, 6);
+
+		// Chamada de desenho - drawcall
+		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
+		glDrawArrays(GL_POINTS, 0, 6);
+
 
 		glBindVertexArray(0); //Desconectando o buffer de geometria
 
