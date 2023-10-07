@@ -9,7 +9,6 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 #include <assert.h>
 
 using namespace std;
@@ -38,21 +37,8 @@ int main()
 	// Inicialização da GLFW
 	glfwInit();
 
-	//Muita atenção aqui: alguns ambientes não aceitam essas configurações
-	//Você deve adaptar para a versão do OpenGL suportada por sua placa
-	//Sugestão: comente essas linhas de código para desobrir a versão e
-	//depois atualize (por exemplo: 4.5 com 4 e 5)
-	/*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);*/
-
-	//Essencial para computadores da Apple
-//#ifdef __APPLE__
-//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-//#endif
-
 	// Criação da janela GLFW
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo! -- Rossana", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo! -- Vitor", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Fazendo o registro da função de callback para a janela GLFW
@@ -83,9 +69,26 @@ int main()
 	GLuint VAO = setupGeometry();
 		
 	glm::mat4 projection = glm::mat4(1); //matriz identidade
-	
-	projection = glm::ortho(0.0, 800.0, 0.0, 600.0, -1.0, 1.0);
-	
+
+	float angle = (float)glfwGetTime();
+
+	//Aplicando transformacoes
+	//model = glm::translate(model, glm::vec3(400.0, 300.0, 0.0));
+	//model = glm::rotate(model, /*glm::radians(45.0f)*/ angle , glm::vec3 * (0.0, 0.0, 1.0));
+	//model = glm::scale(model, glm::vec3(100.0, 100.0, 0.0));
+
+	//Enviando a matriz modelo para o shader
+	//shader.setMat4(model, glm::value_ptr(model));
+
+	//Exercício 1
+	projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
+
+	//Exercício 2
+	//projection = glm::ortho(0.0, 800.0, 600.0, 00.0, -1.0, 1.0);
+
+	//Exercício 3
+	//projection = glm::ortho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+
 	shader.Use();
 
 	shader.setMat4("projection", glm::value_ptr(projection));
@@ -105,36 +108,69 @@ int main()
 
 		// Recuperando o tamanho da janela da aplicação
 		glfwGetFramebufferSize(window, &width, &height);
+
 		// Dimensiona a viewport
-		glViewport(0, 0, width, height);
+		glViewport(width / 2, height / 2, width / 2, height / 2);
 		glBindVertexArray(VAO); //Conectando ao buffer de geometria
-
-
-		//Matriz de transformações no objeto - Matriz de modelo
-		glm::mat4 model = glm::mat4(1); //matriz identidade
-
-		float angle = (float)glfwGetTime();
-		//Aplicando as transformações
-		model = glm::translate(model, glm::vec3(400.0, 300.0, 0.0));
-		model = glm::rotate(model, /*glm::radians(45.0f)*/angle, glm::vec3(0.0, 0.0, 1.0));
-		model = glm::scale(model, glm::vec3(500.0, 500.0, 1.0));
-		
-		
-		//Enviando a matriz de modelo para o shader
-		shader.setMat4("model", glm::value_ptr(model));
-
-
 
 		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0); //enviando cor para variável uniform inputColor
 
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
 		glDrawArrays(GL_TRIANGLES, 0, 6);
+		
+		// Chamada de desenho - drawcall
+		// Contorno - Loop de linhas - GL_LINE_LOOP
+		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
+		glDrawArrays(GL_LINE_LOOP, 0, 3);
+		shader.setVec4("inputColor", 0.0, 1.0, 1.0, 1.0);
+		glDrawArrays(GL_LINE_LOOP, 3, 3);
+
 		// Chamada de desenho - drawcall
 		// PONTOS - GL_POINTS
 		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
 		glDrawArrays(GL_POINTS, 0, 6);
-		
+
+		// Dimensiona a segunda viewport
+		glViewport(0, 0, width / 2, height / 2);
+		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0); //enviando cor para variável uniform inputColor
+
+		// Chamada de desenho - drawcall
+		// Poligono Preenchido - GL_TRIANGLES
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		// Chamada de desenho - drawcall
+		// Contorno - Loop de linhas - GL_LINE_LOOP
+		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
+		glDrawArrays(GL_LINE_LOOP, 0, 3);
+		shader.setVec4("inputColor", 0.0, 1.0, 1.0, 1.0);
+		glDrawArrays(GL_LINE_LOOP, 3, 3);
+
+		// Chamada de desenho - drawcall
+		// PONTOS - GL_POINTS
+		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
+		glDrawArrays(GL_POINTS, 0, 6);
+
+		// Dimensiona a terceira viewport
+		glViewport(width, height, width, height);
+		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0); //enviando cor para variável uniform inputColor
+
+		// Chamada de desenho - drawcall
+		// Poligono Preenchido - GL_TRIANGLES
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		// Chamada de desenho - drawcall
+		// Contorno - Loop de linhas - GL_LINE_LOOP
+		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
+		glDrawArrays(GL_LINE_LOOP, 0, 3);
+		shader.setVec4("inputColor", 0.0, 1.0, 1.0, 1.0);
+		glDrawArrays(GL_LINE_LOOP, 3, 3);
+
+		// Chamada de desenho - drawcall
+		// PONTOS - GL_POINTS
+		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
+		glDrawArrays(GL_POINTS, 0, 6);
+
 		glBindVertexArray(0); //Desconectando o buffer de geometria
 
 		// Troca os buffers da tela
@@ -147,26 +183,14 @@ int main()
 	return 0;
 }
 
-// Função de callback de teclado - só pode ter uma instância (deve ser estática se
-// estiver dentro de uma classe) - É chamada sempre que uma tecla for pressionada
-// ou solta via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-// Esta função está bastante harcoded - objetivo é criar os buffers que armazenam a 
-// geometria de um triângulo
-// Apenas atributo coordenada nos vértices
-// 1 VBO com as coordenadas, VAO com apenas 1 ponteiro para atributo
-// A função retorna o identificador do VAO
 int setupGeometry()
 {
-	// Aqui setamos as coordenadas x, y e z do triângulo e as armazenamos de forma
-	// sequencial, já visando mandar para o VBO (Vertex Buffer Objects)
-	// Cada atributo do vértice (coordenada, cores, coordenadas de textura, normal, etc)
-	// Pode ser arazenado em um VBO único ou em VBOs separados
 	GLfloat vertices[] = {
 		//x   y     z
 		-0.5,  0.5, 0.0, //v0
@@ -175,7 +199,7 @@ int setupGeometry()
 
 		 0.0,  0.0, 0.0, //v3
 		-0.5, -0.5, 0.0, //v4
-		 0.5, -0.5, 0.0 //v5 
+		 0.5, -0.5, 0.0, //v5 
 	};
 
 	GLuint VBO, VAO;
