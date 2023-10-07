@@ -9,11 +9,16 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <assert.h>
-#include <math.h>
-
 
 using namespace std;
+
+
+// GLM
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 //Classe para manipulação dos shaders
 #include "Shader.h"
@@ -34,7 +39,7 @@ int main()
 	glfwInit();
 
 	// Criação da janela GLFW
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo! -- Vitor Soares", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo! -- Rossana", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Fazendo o registro da função de callback para a janela GLFW
@@ -55,8 +60,7 @@ int main()
 
 	// Definindo as dimensões da viewport com as mesmas dimensões da janela da aplicação
 	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
-	glViewport(0, 0, width, height);
+	
 
 
 	// Compilando e buildando o programa de shader
@@ -64,42 +68,61 @@ int main()
 
 	// Gerando um buffer simples, com a geometria de um triângulo
 	GLuint VAO = setupGeometry();
+		
+	glm::mat4 projection = glm::mat4(1); //matriz identidade
 	
-	GLint colorLoc = glGetUniformLocation(shader.ID, "inputColor");
+	projection = glm::ortho(0.0, 800.0, 0.0, 600.0, -1.0, 1.0);
 	
 	shader.Use();
-	
+
+	shader.setMat4("projection", glm::value_ptr(projection));
+
 	// Loop da aplicação - "game loop"
 	while (!glfwWindowShouldClose(window))
 	{
+		// Checa se houveram eventos de input (key pressed, mouse moved etc.) e chama as funções de callback correspondentes
 		glfwPollEvents();
 
+		// Limpa o buffer de cor
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); //cor de fundo
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glLineWidth(5);
+		glLineWidth(10);
 		glPointSize(20);
 
+		// Recuperando o tamanho da janela da aplicação
+		glfwGetFramebufferSize(window, &width, &height);
+		// Dimensiona a viewport
+		glViewport(0, 0, width, height);
 		glBindVertexArray(VAO); //Conectando ao buffer de geometria
 
-		//Exercício 5.a (Triângulo preenchido)
-		//glUniform4f(colorLoc, 0.0f, 0.0f, 1.0f, 1.0f);
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		//Exercício 5.C (Triângulo com pontos)
-		//glUniform4f(colorLoc, 1.0f, 0.5f, 0.0f, 1.0f);
-		//glDrawArrays(GL_LINE_LOOP, 0, 6);
+		//Matriz de transformações no objeto - Matriz de modelo
+		glm::mat4 model = glm::mat4(1); //matriz identidade
 
-		//Exercício 5.b (Triângulo contornado)
-		//glUniform4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f);
-		//glDrawArrays(GL_POINTS, 0, 6);
+		float angle = (float)glfwGetTime();
+		//Aplicando as transformações
+		model = glm::translate(model, glm::vec3(400.0, 300.0, 0.0));
+		model = glm::rotate(model, /*glm::radians(45.0f)*/angle, glm::vec3(0.0, 0.0, 1.0));
+		model = glm::scale(model, glm::vec3(500.0, 500.0, 1.0));
+		
+		
+		//Enviando a matriz de modelo para o shader
+		shader.setMat4("model", glm::value_ptr(model));
 
-		//Exercício 5.D pronto junto
 
-		//Exercício 6 e 7
-		glUniform4f(colorLoc, 1.0f, 0.5f, 0.0f, 1.0f);
-		glDrawArrays(GL_LINE_LOOP, 0, 100);
 
+		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0); //enviando cor para variável uniform inputColor
+
+		// Chamada de desenho - drawcall
+		// Poligono Preenchido - GL_TRIANGLES
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		// Chamada de desenho - drawcall
+		// PONTOS - GL_POINTS
+		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
+		glDrawArrays(GL_POINTS, 0, 6);
+		
 		glBindVertexArray(0); //Desconectando o buffer de geometria
 
 		// Troca os buffers da tela
@@ -112,49 +135,36 @@ int main()
 	return 0;
 }
 
+// Função de callback de teclado - só pode ter uma instância (deve ser estática se
+// estiver dentro de uma classe) - É chamada sempre que uma tecla for pressionada
+// ou solta via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-//Exercício 5
-//int setupGeometry()
-//{
-//	GLfloat vertices[] = {
-//		//x   y     z
-//		-0.5,  0.9, 0.0, //v0
-//		 0.0,  0.0, 0.0, //v1
-// 		 0.5,  0.9, 0.0, //v2 
-//		-0.5, -0.9, 0.0, //v1
-//		 0.0,  0.0, 0.0, //v4
-//		 0.5, -0.9, 0.0, //v2
-//	};
-
-
+// Esta função está bastante harcoded - objetivo é criar os buffers que armazenam a 
+// geometria de um triângulo
+// Apenas atributo coordenada nos vértices
+// 1 VBO com as coordenadas, VAO com apenas 1 ponteiro para atributo
+// A função retorna o identificador do VAO
 int setupGeometry()
 {
-	//Exercício 6 (Círculo) = num_segments = 100
-	//Exercício 6-A (Octágono) = num_segments = 8
-	//Exercício 6-B (Pentágono) = num_segments = 5
-	const int num_segments = 100;// número de segmentos usados para desenhar o círculo
-	GLfloat vertices[3 * (num_segments + 1)]; // array para armazenar os vértices do círculo
-	
-	//Exercício 6 - do círculo 
-	for (int i = 0; i <= num_segments; ++i) {
-		float theta = 2.0f * 3.1415926f * float(i) / float(num_segments);
-		vertices[i * 3] = cosf(theta);
-		vertices[i * 3 + 1] = sinf(theta);
-		vertices[i * 3 + 2] = 0;
-	}
-	
-	//Exercício 7
-	//for (int i = 0; i <= num_segments; ++i) {
-		//float theta = 4.0f * 3.1415926f * float(i) / float(num_segments); // ângulo atual
-		//vertices[i * 3] = 0.1 * theta * cosf(theta); // coordenada x
-		//vertices[i * 3 + 1] = 0.1 * theta * sinf(theta); // coordenada y
-		//vertices[i * 3 + 2] = 0; // coordenada z
-	//}
+	// Aqui setamos as coordenadas x, y e z do triângulo e as armazenamos de forma
+	// sequencial, já visando mandar para o VBO (Vertex Buffer Objects)
+	// Cada atributo do vértice (coordenada, cores, coordenadas de textura, normal, etc)
+	// Pode ser arazenado em um VBO único ou em VBOs separados
+	GLfloat vertices[] = {
+		//x   y     z
+		-0.5,  0.5, 0.0, //v0
+		 0.0,  0.0, 0.0, //v1
+ 		 0.5,  0.5, 0.0, //v2 
+
+		 0.0,  0.0, 0.0, //v3
+		-0.5, -0.5, 0.0, //v4
+		 0.5, -0.5, 0.0 //v5 
+	};
 
 	GLuint VBO, VAO;
 	//Geração do identificador do VBO
@@ -169,10 +179,18 @@ int setupGeometry()
 	// Vincula (bind) o VAO primeiro, e em seguida  conecta e seta o(s) buffer(s) de vértices
 	// e os ponteiros para os atributos 
 	glBindVertexArray(VAO);
-
+	//Para cada atributo do vertice, criamos um "AttribPointer" (ponteiro para o atributo), indicando: 
+	// Localização no shader * (a localização dos atributos devem ser correspondentes no layout especificado no vertex shader)
+	// Numero de valores que o atributo tem (por ex, 3 coordenadas xyz) 
+	// Tipo do dado
+	// Se está normalizado (entre zero e um)
+	// Tamanho em bytes 
+	// Deslocamento a partir do byte zero 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
+	// Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice 
+	// atualmente vinculado - para que depois possamos desvincular com segurança
 	glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
 	// Desvincula o VAO (é uma boa prática desvincular qualquer buffer ou array para evitar bugs medonhos)
