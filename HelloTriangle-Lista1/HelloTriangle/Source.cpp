@@ -12,6 +12,7 @@
 #include <assert.h>
 #include <math.h>
 
+
 using namespace std;
 
 //Classe para manipulação dos shaders
@@ -83,7 +84,6 @@ int main()
 
 		glBindVertexArray(VAO); //Conectando ao buffer de geometria
 
-
 		//Exercício 1.a (Triângulo preenchido)
 		glUniform4f(colorLoc, 0.0f, 0.0f, 1.0f, 1.0f);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -133,6 +133,7 @@ int setupGeometry()
 		 0.5, -0.9, 0.0, //v2 
 
 	};
+	
 
 	GLuint VBO, VAO;
 	//Geração do identificador do VBO

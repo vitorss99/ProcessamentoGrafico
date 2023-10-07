@@ -74,7 +74,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../Common/include;../../Dependencies/glfw-3.3.8.bin.WIN32/include;../../Dependencies/GLAD/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Dependencies/glm;../../Common/include;../../Dependencies/glfw-3.3.8.bin.WIN32/include;../../Dependencies/GLAD/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../../Dependencies/glfw-3.3.8.bin.WIN32/lib-vc2019</AdditionalLibraryDirectories>
@@ -86,7 +86,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\Vitor\Documents\GitHub\PG-VitorSoares-AgoraSim\Dependencies\GLAD\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\Users\Vitor\Documents\GitHub\PG-VitorSoares-AgoraSim\Dependencies\glfw-3.3.8.bin.WIN32\lib-vc2019</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
