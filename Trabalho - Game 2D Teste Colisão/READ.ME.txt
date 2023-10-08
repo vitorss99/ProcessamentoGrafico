@@ -1,0 +1,10 @@
+Exercicios da lista 3
+
+Explicações:
+Exercício 1, a mesma geometria, desenhada na tela 3 vezes, com o mesmo VAO, 3 chamadas de desenho mas não consegui fazer 3
+matrizes de transofrmação diferentes na tela. Até mudei alguns parâmetros mas não vi diferença na tela.
+
+Exercício 2: Não consegui fazer
+
+Exercício 3: Comandos no teclado permitindo a alteração de posição da geometria, para cima, para baixo, e para os dois lados,
+tanto no WASD quanto nas setas

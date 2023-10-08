@@ -28,7 +28,6 @@ using namespace std;
 //Classe Sprite 
 #include "Sprite.h"
 
-
 //Classe Timer
 #include "Timer.h"
 
@@ -44,6 +43,7 @@ int setupSprite();
 const GLuint WIDTH = 800, HEIGHT = 600;
 
 Sprite personagem;
+Sprite personagem2;
 
 // Função MAIN
 int main()
@@ -83,10 +83,10 @@ int main()
 
 	//Fazendo a leitura da textura do personagem
 	int sprWidth, sprHeight;
-	int texID = setupTexture("../../Textures/characters/PNG/Knight/walk.png", sprWidth, sprHeight);
+	int texID = setupTexture("../../Textures/characters/walk.png", sprWidth, sprHeight);
 
 	int sprWidth2, sprHeight2;
-	int texID2 = setupTexture("../../Textures/backgrounds/PNG/Postapocalypce1/Bright/postapocalypse1.png", sprWidth2, sprHeight2);
+	int texID2 = setupTexture("../../Textures/backgrounds/postapocalypse3.png", sprWidth2, sprHeight2);
 
 	// Criando a instância de nosso objeto sprite do Personagem
 	personagem.initialize(1,6);
@@ -94,6 +94,13 @@ int main()
 	personagem.setDimensions(glm::vec3(sprWidth/6, sprHeight, 1.0));
 	personagem.setShader(&shader);
 	personagem.setTexID(texID);
+
+	// Criando a instância de nosso objeto sprite do Personagem
+	personagem2.initialize(1, 6);
+	personagem2.setPosition(glm::vec3(100.0, 100.0, 0.0));
+	personagem2.setDimensions(glm::vec3(sprWidth / 6, sprHeight, 1.0));
+	personagem2.setShader(&shader);
+	personagem2.setTexID(texID);
 
 	//Criando a instância de nosso objeto sprite do fundo (background)
 	Sprite background;
@@ -152,8 +159,12 @@ int main()
 		//-------------------------------------------------------------
 		personagem.update();
 		personagem.draw();
-		//--------------------------------------------------------------
-		
+
+		personagem2.update();
+		personagem2.draw();
+		//-------------------------------------------------------------
+
+
 		timer.finish();
 		double waitingTime = timer.calcWaitingTime(24, timer.getElapsedTimeMs());
 		if (waitingTime)
@@ -170,9 +181,6 @@ int main()
 	return 0;
 }
 
-// Função de callback de teclado - só pode ter uma instância (deve ser estática se
-// estiver dentro de uma classe) - É chamada sempre que uma tecla for pressionada
-// ou solta via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -204,17 +212,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
-// Esta função está bastante harcoded - objetivo é criar os buffers que armazenam a 
-// geometria de um triângulo
-// Apenas atributo coordenada nos vértices
-// 1 VBO com as coordenadas, VAO com apenas 1 ponteiro para atributo
-// A função retorna o identificador do VAO
 int setupGeometry()
 {
-	// Aqui setamos as coordenadas x, y e z do triângulo e as armazenamos de forma
-	// sequencial, já visando mandar para o VBO (Vertex Buffer Objects)
-	// Cada atributo do vértice (coordenada, cores, coordenadas de textura, normal, etc)
-	// Pode ser arazenado em um VBO único ou em VBOs separados
 	GLfloat vertices[] = {
 		//x   y     z    s    t   
 		-0.5, -0.5, 0.0, 0.0, 0.0,//v0
@@ -235,13 +234,6 @@ int setupGeometry()
 	// Vincula (bind) o VAO primeiro, e em seguida  conecta e seta o(s) buffer(s) de vértices
 	// e os ponteiros para os atributos 
 	glBindVertexArray(VAO);
-	//Para cada atributo do vertice, criamos um "AttribPointer" (ponteiro para o atributo), indicando: 
-	// Localização no shader * (a localização dos atributos devem ser correspondentes no layout especificado no vertex shader)
-	// Numero de valores que o atributo tem (por ex, 3 coordenadas xyz) 
-	// Tipo do dado
-	// Se está normalizado (entre zero e um)
-	// Tamanho em bytes 
-	// Deslocamento a partir do byte zero 
 
 	//Atributo posição
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
@@ -251,8 +243,6 @@ int setupGeometry()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 
-	// Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice 
-	// atualmente vinculado - para que depois possamos desvincular com segurança
 	glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
 	// Desvincula o VAO (é uma boa prática desvincular qualquer buffer ou array para evitar bugs medonhos)
@@ -305,10 +295,6 @@ int setupTexture(string filePath, int &width, int &height)
 
 int setupSprite()
 {
-	// Aqui setamos as coordenadas x, y e z do triângulo e as armazenamos de forma
-	// sequencial, já visando mandar para o VBO (Vertex Buffer Objects)
-	// Cada atributo do vértice (coordenada, cores, coordenadas de textura, normal, etc)
-	// Pode ser arazenado em um VBO único ou em VBOs separados
 	GLfloat vertices[] = {
 		//Primeiro Triângulo
 		//x   y     z    s    t   
@@ -335,15 +321,7 @@ int setupSprite()
 	// Vincula (bind) o VAO primeiro, e em seguida  conecta e seta o(s) buffer(s) de vértices
 	// e os ponteiros para os atributos 
 	glBindVertexArray(VAO);
-	//Para cada atributo do vertice, criamos um "AttribPointer" (ponteiro para o atributo), indicando: 
-	// Localização no shader * (a localização dos atributos devem ser correspondentes no layout especificado no vertex shader)
-	// Numero de valores que o atributo tem (por ex, 3 coordenadas xyz) 
-	// Tipo do dado
-	// Se está normalizado (entre zero e um)
-	// Tamanho em bytes 
-	// Deslocamento a partir do byte zero 
 
-	//Atributo posição
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
@@ -351,11 +329,8 @@ int setupSprite()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 
-	// Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice 
-	// atualmente vinculado - para que depois possamos desvincular com segurança
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	// Desvincula o VAO (é uma boa prática desvincular qualquer buffer ou array para evitar bugs medonhos)
 	glBindVertexArray(0);
 
 	return VAO;

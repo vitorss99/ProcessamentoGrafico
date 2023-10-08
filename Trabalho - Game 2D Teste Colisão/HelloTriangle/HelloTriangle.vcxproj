@@ -125,7 +125,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\Common\include\Shader.h" />
     <ClInclude Include="..\..\Dependencies\stb_image\stb_image.h" />
-    <ClInclude Include="Item.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
