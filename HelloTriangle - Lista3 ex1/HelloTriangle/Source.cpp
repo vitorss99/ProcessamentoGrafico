@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <assert.h>
 
 using namespace std;
@@ -38,7 +39,7 @@ int main()
 	glfwInit();
 
 	// Criação da janela GLFW
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo! -- Vitor", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo! - Vitor Soares", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Fazendo o registro da função de callback para a janela GLFW
@@ -69,23 +70,9 @@ int main()
 	GLuint VAO = setupGeometry();
 		
 	glm::mat4 projection = glm::mat4(1); //matriz identidade
-
-	float angle = (float)glfwGetTime();
-
-	//Aplicando transformacoes
-	//model = glm::translate(model, glm::vec3(400.0, 300.0, 0.0));
-	//model = glm::rotate(model, /*glm::radians(45.0f)*/ angle , glm::vec3 * (0.0, 0.0, 1.0));
-	//model = glm::scale(model, glm::vec3(100.0, 100.0, 0.0));
-
-	//Enviando a matriz modelo para o shader
-	//shader.setMat4(model, glm::value_ptr(model));
-
-	//Exercício 1
-	projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
-
-	//Exercício 2
-	//projection = glm::ortho(0.0, 800.0, 600.0, 00.0, -1.0, 1.0);
-
+	
+	projection = glm::ortho(0.0, 800.0, 0.0, 600.0, -1.0, 1.0);
+	
 	shader.Use();
 
 	shader.setMat4("projection", glm::value_ptr(projection));
@@ -105,94 +92,38 @@ int main()
 
 		// Recuperando o tamanho da janela da aplicação
 		glfwGetFramebufferSize(window, &width, &height);
-
-		//desenho 1 ------------------------------------------------------------------------------------------//
 		// Dimensiona a viewport
-		glViewport(width / 2, height / 2, width / 2, height / 2);
+		glViewport(0, 0, width, height);
 		glBindVertexArray(VAO); //Conectando ao buffer de geometria
 
+
+		//Matriz de transformações no objeto - Matriz de modelo
+		glm::mat4 model = glm::mat4(1); //matriz identidade
+
+		float angle = (float)glfwGetTime();
+		//Aplicando as transformações
+		model = glm::translate(model, glm::vec3(400.0, 300.0, 0.0));
+		model = glm::rotate(model, /*glm::radians(45.0f)*/angle, glm::vec3(0.0, 0.0, 1.0));
+		model = glm::scale(model, glm::vec3(500.0, 500.0, 1.0));
+
+		shader.setMat4("model", glm::value_ptr(model));
 		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0);
+
+		glViewport(0, height / 2, width / 2, height / 2);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
+		glDrawArrays(GL_POINTS, 0, 6);
+
+		glViewport(width / 2, height / 2, width / 2, height / 2);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
-		glDrawArrays(GL_LINE_LOOP, 0, 3);
-		shader.setVec4("inputColor", 0.0, 1.0, 1.0, 1.0);
-		glDrawArrays(GL_LINE_LOOP, 3, 3);
-		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
 		glDrawArrays(GL_POINTS, 0, 6);
 
-		//desenho 2 -------------------------------------------------------------------------------------------//
-		// Dimensiona a segunda viewport
-		glViewport(0, height/2, width / 2, height / 2);
-		glBindVertexArray(VAO);
-
-		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0); //enviando cor para variável uniform inputColor
-
-		// Chamada de desenho - drawcall
+		glViewport(width / 2, 0, width / 2, height / 2);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		// Chamada de desenho - drawcall
 		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
-		glDrawArrays(GL_LINE_LOOP, 0, 3);
-		shader.setVec4("inputColor", 0.0, 1.0, 1.0, 1.0);
-		glDrawArrays(GL_LINE_LOOP, 3, 3);
-
-		// Chamada de desenho - drawcall
-		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
 		glDrawArrays(GL_POINTS, 0, 6);
-
-		// Chamada de desenho - drawcall
-		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
-		glDrawArrays(GL_POINTS, 0, 6);
-
-		//desenho 3 -------------------------------------------------------------------------------------------//
-		// Dimensiona a segunda viewport
-		glViewport(0, 0, width / 2, height / 2);
-		glBindVertexArray(VAO);
-
-		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0); //enviando cor para variável uniform inputColor
-
-		// Chamada de desenho - drawcall
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		// Chamada de desenho - drawcall
-		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
-		glDrawArrays(GL_LINE_LOOP, 0, 3);
-		shader.setVec4("inputColor", 0.0, 1.0, 1.0, 1.0);
-		glDrawArrays(GL_LINE_LOOP, 3, 3);
-
-		// Chamada de desenho - drawcall
-		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
-		glDrawArrays(GL_POINTS, 0, 6);
-
-		// Chamada de desenho - drawcall
-		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
-		glDrawArrays(GL_POINTS, 0, 6);
-
-		//desenho 4 -------------------------------------------------------------------------------------------//
-		// Dimensiona a segunda viewport
-		glViewport(width/2, 0, width / 2, height / 2);
-		glBindVertexArray(VAO);
-
-		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0); //enviando cor para variável uniform inputColor
-
-		// Chamada de desenho - drawcall
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		// Chamada de desenho - drawcall
-		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
-		glDrawArrays(GL_LINE_LOOP, 0, 3);
-		shader.setVec4("inputColor", 0.0, 1.0, 1.0, 1.0);
-		glDrawArrays(GL_LINE_LOOP, 3, 3);
-
-		// Chamada de desenho - drawcall
-		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
-		glDrawArrays(GL_POINTS, 0, 6);
-
-		// Chamada de desenho - drawcall
-		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
-		glDrawArrays(GL_POINTS, 0, 6);
-
-
+		
 		glBindVertexArray(0); //Desconectando o buffer de geometria
 
 		// Troca os buffers da tela
@@ -221,7 +152,7 @@ int setupGeometry()
 
 		 0.0,  0.0, 0.0, //v3
 		-0.5, -0.5, 0.0, //v4
-		 0.5, -0.5, 0.0, //v5 
+		 0.5, -0.5, 0.0 //v5 
 	};
 
 	GLuint VBO, VAO;

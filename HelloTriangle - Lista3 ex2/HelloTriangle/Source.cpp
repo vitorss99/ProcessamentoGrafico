@@ -1,9 +1,9 @@
 /* Hello Triangle - código adaptado de https://learnopengl.com/#!Getting-started/Hello-Triangle 
  *
- * Adaptado por Rossana Baptista Queiroz
+ * Adaptado por Vitor Soares Souza
  * para a disciplina de Processamento Gráfico - Unisinos
- * Versão inicial: 7/4/2017
- * Última atualização em 14/08/2023
+ * Versão inicial: 25/09/2023
+ * Última atualização em 08/10/2023
  *
  */
 
@@ -39,7 +39,7 @@ int main()
 	glfwInit();
 
 	// Criação da janela GLFW
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo! -- Rossana", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo! - Vitor Soares", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Fazendo o registro da função de callback para a janela GLFW
@@ -105,22 +105,23 @@ int main()
 		model = glm::translate(model, glm::vec3(400.0, 300.0, 0.0));
 		model = glm::rotate(model, /*glm::radians(45.0f)*/angle, glm::vec3(0.0, 0.0, 1.0));
 		model = glm::scale(model, glm::vec3(500.0, 500.0, 1.0));
-		
-		
-		//Enviando a matriz de modelo para o shader
+
 		shader.setMat4("model", glm::value_ptr(model));
+		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0);
 
-
-
-		shader.setVec4("inputColor", 0.0, 0.0, 1.0, 1.0); //enviando cor para variável uniform inputColor
-
-		// Chamada de desenho - drawcall
-		// Poligono Preenchido - GL_TRIANGLES
+		glViewport(0, height / 2, width / 2, height / 2);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		// Chamada de desenho - drawcall
-		// PONTOS - GL_POINTS
 		shader.setVec4("inputColor", 1.0, 0.0, 1.0, 1.0);
+		glDrawArrays(GL_POINTS, 0, 6);
+
+		glViewport(width / 2, height / 2, width / 2, height / 2);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
+		glDrawArrays(GL_POINTS, 0, 6);
+
+		glViewport(width / 2, 0, width / 2, height / 2);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		shader.setVec4("inputColor", 1.0, 1.0, 0.0, 1.0);
 		glDrawArrays(GL_POINTS, 0, 6);
 		
 		glBindVertexArray(0); //Desconectando o buffer de geometria
@@ -135,26 +136,14 @@ int main()
 	return 0;
 }
 
-// Função de callback de teclado - só pode ter uma instância (deve ser estática se
-// estiver dentro de uma classe) - É chamada sempre que uma tecla for pressionada
-// ou solta via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-// Esta função está bastante harcoded - objetivo é criar os buffers que armazenam a 
-// geometria de um triângulo
-// Apenas atributo coordenada nos vértices
-// 1 VBO com as coordenadas, VAO com apenas 1 ponteiro para atributo
-// A função retorna o identificador do VAO
 int setupGeometry()
 {
-	// Aqui setamos as coordenadas x, y e z do triângulo e as armazenamos de forma
-	// sequencial, já visando mandar para o VBO (Vertex Buffer Objects)
-	// Cada atributo do vértice (coordenada, cores, coordenadas de textura, normal, etc)
-	// Pode ser arazenado em um VBO único ou em VBOs separados
 	GLfloat vertices[] = {
 		//x   y     z
 		-0.5,  0.5, 0.0, //v0
