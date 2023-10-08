@@ -1,9 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\HelloTriangle-Lista1",
-    "\\HelloTriangle-Lista1\\HelloTriangle"
+    "\\HelloTriangle",
+    "\\HelloTriangle - Ortho",
+    "\\HelloTriangle - Ortho\\shaders"
   ],
-  "SelectedNode": "\\HelloTriangle-Lista1\\HelloTriangle\\Source.cpp",
+  "SelectedNode": "\\HelloTriangle - Ortho\\shaders\\helloTriangle.vs",
   "PreviewInSolutionExplorer": false
 }
